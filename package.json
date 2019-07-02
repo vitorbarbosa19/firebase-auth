@@ -1,0 +1,19 @@
+{
+  "name": "firebase-auth",
+  "version": "1.0.0",
+  "description": "To test firebase auth",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel src/index.html",
+    "build": "parcel build src/index.html"
+  },
+  "keywords": [],
+  "author": "Vitor Barbosa",
+  "license": "ISC",
+  "browserslist": [
+    "last 1 Chrome version"
+  ],
+  "devDependencies": {
+    "parcel-bundler": "^1.12.3"
+  }
+}
