@@ -25,6 +25,10 @@ export const App = () => {
 			setUserLastSignIn(userObject.metadata.lastSignInTime)
 		}
 	}), [])
+	// effect to add users collection listener
+	useEffect(() => store.collection('users').doc('oc2VEpOG6ud7KXybc1bG').onSnapshot(doc => {
+		console.log(doc.data())
+	}), [])
 	// add simple signin method
 	const signIn = async () => {
 		try {
@@ -45,14 +49,13 @@ export const App = () => {
 	}
 	const getAddress = ({ target: { value } }) => setInputAddress(value)
 	const getCNPJ = ({ target: { value } }) => setInputCNPJ(value)
+	// add method to update to database inputs from user
 	const updateDatabase = async () => {
 		try {
-			const result = await store.collection('users').add({
-				id: user.uid,
+			await store.collection('users').doc('oc2VEpOG6ud7KXybc1bG').update({
 				address: inputAddress,
 				cnpj: inputCNPJ
 			})
-			console.log(result)
 		} catch (error) {
 			console.log(error)
 		}
