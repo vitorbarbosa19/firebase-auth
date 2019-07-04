@@ -6,11 +6,17 @@ export const App = () => {
 	const readyToUpdateDb = useRef(false)
 	const [isLoggedIn, setIsLoggedIn] = useState(null)
 	const [userName, setUserName] = useState(null)
+	const [userEmail, setUserEmail] = useState(null)
+	const [userIsVerified, setUserIsVerified] = useState(null)
+	const [userLastSignIn, setUserLastSignIn] = useState(null)
 	const [inputName, setInputName] = useState('')
 	useEffect(() => db.auth().onAuthStateChanged(userObject => {
 		setIsLoggedIn(!!userObject)
 		if (userObject) {
 			setUserName(userObject.displayName)
+			setUserEmail(userObject.email)
+			setUserIsVerified(userObject.emailVerified ? 'Is verified' : 'Is not verified')
+			setUserLastSignIn(userObject.metadata.lastSignInTime)
 		}
 	}), [])
 	useEffect(() => {
@@ -42,9 +48,9 @@ export const App = () => {
 					<div>
 						<p>Logged in</p>
 						<p>{userName}</p>
-						{/*<p>{user.email}</p>
-						<p>{user.emailVerified}</p>
-						<p>{user.metadata.lastSignInTime}</p>*/}
+						<p>{userEmail}</p>
+						<p>{userIsVerified}</p>
+						<p>{userLastSignIn}</p>
 					</div>
 				:
 					<p>Logged out</p>
