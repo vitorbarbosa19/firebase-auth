@@ -51,7 +51,8 @@ export const App = () => {
 			}
 			<input type='submit' value='signIn' onClick={signIn} />
 			<input type='submit' value='signOut' onClick={() => db.auth().signOut()} />
-			<input type='submit' value='updateName' onClick={() => setInputName('Vitor H.')} />
+			<input type='submit' value='updateName1' onClick={() => setInputName('Almeida')} />
+			<input type='submit' value='updateName2' onClick={() => setInputName('Barbosa')} />
 		</div>
 	)
 }
