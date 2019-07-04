@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef } from 'react'
 import { db } from '../../firebase'
 
 export const App = () => {
-	// no need for useState or useRef, cause currentUser persists
+	// no need for useState or useRef, cause reference persists
 	const user = db.auth().currentUser
+	const store = db.firestore()
 	// state for presentational data
 	const [isLoggedIn, setIsLoggedIn] = useState(null)
 	const [userName, setUserName] = useState(null)
@@ -44,6 +45,18 @@ export const App = () => {
 	}
 	const getAddress = ({ target: { value } }) => setInputAddress(value)
 	const getCNPJ = ({ target: { value } }) => setInputCNPJ(value)
+	const updateDatabase = async () => {
+		try {
+			const result = await store.collection('users').add({
+				id: user.uid,
+				address: inputAddress,
+				cnpj: inputCNPJ
+			})
+			console.log(result)
+		} catch (error) {
+			console.log(error)
+		}
+	}
 	return (
 		<div>
 			{isLoggedIn
@@ -56,6 +69,7 @@ export const App = () => {
 						<p>{userLastSignIn}</p>
 						<input type='text' value={inputAddress} onChange={getAddress} />
 						<input type='text' value={inputCNPJ} onChange={getCNPJ} />
+						<input type='submit' value='updateDatabase' onClick={updateDatabase} />
 					</div>
 				:
 					<p>Logged out</p>
