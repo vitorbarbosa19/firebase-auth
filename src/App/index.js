@@ -4,8 +4,6 @@ import { db } from '../../firebase'
 export const App = () => {
 	// no need for useState or useRef, cause currentUser persists
 	const user = db.auth().currentUser
-	// support variable
-	const readyToUpdateDb = useRef(false)
 	// state for presentational data
 	const [isLoggedIn, setIsLoggedIn] = useState(null)
 	const [userName, setUserName] = useState(null)
@@ -26,27 +24,20 @@ export const App = () => {
 			setUserLastSignIn(userObject.metadata.lastSignInTime)
 		}
 	}), [])
-	// effect to update to database the userName supplied by the user
-	useEffect(() => {
-		const updateProfile = async () => {
-			try {
-				await user.updateProfile({ displayName: inputName })
-				setUserName(user.displayName)
-			} catch (error) {
-				console.log(error)
-			}
-		}
-		// use ref to skip effect on first render
-		if (readyToUpdateDb.current)
-			updateProfile()
-		if (!readyToUpdateDb.current)
-			readyToUpdateDb.current = true
-	}, [inputName])
 	// add simple signin method
 	const signIn = async () => {
 		try {
 			const result = await db.auth().signInWithEmailAndPassword('vitorbarbosa19@gmail.com', 'qw1234')
 			console.log(result)
+		} catch (error) {
+			console.log(error)
+		}
+	}
+	// add method to update profile info to database and receive realtime update
+	const updateProfile = async (inputValue) => {
+		try {
+			await user.updateProfile({ displayName: inputValue })
+			setUserName(user.displayName)
 		} catch (error) {
 			console.log(error)
 		}
@@ -71,8 +62,8 @@ export const App = () => {
 			}
 			<input type='submit' value='signIn' onClick={signIn} />
 			<input type='submit' value='signOut' onClick={() => db.auth().signOut()} />
-			<input type='submit' value='updateName1' onClick={() => setInputName('Almeida')} />
-			<input type='submit' value='updateName2' onClick={() => setInputName('Barbosa')} />
+			<input type='submit' value='updateName1' onClick={updateProfile.bind(null,'Almeida')} />
+			<input type='submit' value='updateName2' onClick={updateProfile.bind(null,'Barbosa')} />
 		</div>
 	)
 }
