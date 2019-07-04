@@ -1,14 +1,32 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { db } from '../../firebase'
 
 export const App = () => {
-	const [user, setUser] = useState(null)
+	const user = db.auth().currentUser // no need for useState or useRef, cause currentUser persists
+	const readyToUpdateDb = useRef(false)
+	const [isLoggedIn, setIsLoggedIn] = useState(null)
 	const [userName, setUserName] = useState(null)
+	const [inputName, setInputName] = useState('')
 	useEffect(() => db.auth().onAuthStateChanged(userObject => {
-		setUser(userObject)
-		if (userObject)
+		setIsLoggedIn(!!userObject)
+		if (userObject) {
 			setUserName(userObject.displayName)
+		}
 	}), [])
+	useEffect(() => {
+		const updateProfile = async () => {
+			try {
+				await user.updateProfile({ displayName: inputName })
+				setUserName(user.displayName)
+			} catch (error) {
+				console.log(error)
+			}
+		}
+		if (readyToUpdateDb.current)
+			updateProfile()
+		if (!readyToUpdateDb.current)
+			readyToUpdateDb.current = true
+	}, [inputName])
 	const signIn = async () => {
 		try {
 			const result = await db.auth().signInWithEmailAndPassword('vitorbarbosa19@gmail.com', 'qw1234')
@@ -17,37 +35,23 @@ export const App = () => {
 			console.log(error)
 		}
 	}
-	useEffect(() => {
-		const updateProfile = async () => {
-			console.log('user',user)
-			try {
-				await user.updateProfile({ displayName: userName })
-				setUser(Object.create(user))
-			} catch (error) {
-				console.log(error)
-			}
-		}
-		console.log('userName',userName)
-		if (userName)
-			updateProfile()
-	}, [userName])
 	return (
 		<div>
-			{user
+			{isLoggedIn
 				?
 					<div>
 						<p>Logged in</p>
-						<p>{user.displayName}</p>
-						<p>{user.email}</p>
+						<p>{userName}</p>
+						{/*<p>{user.email}</p>
 						<p>{user.emailVerified}</p>
-						<p>{user.metadata.lastSignInTime}</p>					
+						<p>{user.metadata.lastSignInTime}</p>*/}
 					</div>
 				:
 					<p>Logged out</p>
 			}
 			<input type='submit' value='signIn' onClick={signIn} />
 			<input type='submit' value='signOut' onClick={() => db.auth().signOut()} />
-			<input type='submit' value='updateProfile' onClick={() => setUserName('Vitor S.')} />
+			<input type='submit' value='updateName' onClick={() => setInputName('Vitor H.')} />
 		</div>
 	)
 }
