@@ -2,10 +2,11 @@ import React from 'react'
 import { useRoutes } from 'hookrouter'
 import { Home } from './Home'
 import { New } from './New'
+import { ComponentWithContext } from './ComponentWithContext'
 
 const routes = {
 	'/': () => <Home />,
-	'/new': () => <New />
+	'/new': () => <ComponentWithContext><New /></ComponentWithContext>
 }
 
 export const App = () => {
