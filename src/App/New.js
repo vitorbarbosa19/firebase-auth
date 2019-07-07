@@ -1,10 +1,10 @@
 import React, { useContext } from 'react'
-import { Context } from './ComponentWithContext'
+import { PathContext } from './Path'
 
 
 export const New = () => {
-	const value = useContext(Context)
+	const path = useContext(PathContext)
 	return (
-		<div>{value}</div>
+		<div>{path}</div>
 	)
 }
